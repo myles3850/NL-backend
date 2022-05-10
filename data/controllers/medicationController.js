@@ -1,0 +1,10 @@
+const express = require("express");
+const db  = require('../medication/medicationsQueries');
+
+var medRoutes = express.Router();
+
+//this controller is responsable for all the reoutes needed for the medication endpoints. the endpints are grouped by url
+
+medRoutes.get("/", db.getUsersMedications);
+
+module.exports = medRoutes;
