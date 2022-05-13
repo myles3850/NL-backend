@@ -32,7 +32,7 @@ const createUser = async (request, response) => {
     const salt = await bcrypt.genSalt();
     const hash = await bcrypt.hash(password, salt);
 
-    const insertCredentialQuery = "INSERT INTO credential (user_id, salt, hashed_password) VALUES ($1, $2, $3)";
+    const insertCredentialQuery = "INSERT INTO credentials (user_id, salt, hashed_password) VALUES ($1, $2, $3)";
     await pool.query(insertCredentialQuery, [userId, salt, hash]);
 
     return response.status(201).send(`User: ${name} created successfully`);
