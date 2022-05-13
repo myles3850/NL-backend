@@ -8,15 +8,15 @@ const getUsersMedications = (request, response) => {
 		return response
 			.status(400)
 			.json({ error: "required field 'ID' missing, please correct and send request again" });
-	}
+	};
 	//validation to check the paramter is a number only
 	if (isNaN(userId)) {
 		return response
 			.status(400)
 			.json({ error: "required field 'ID' needs to be a number, please correct and send request again" });
-	}
+	};
 
-	pool.query('SELECT * FROM medication WHERE "userId" = $1 AND "inUse" = true', [userId], (error, results) => {
+	pool.query('SELECT id, medication, dose, freq FROM medication WHERE "userId" = $1 AND "inUse" = true', [userId], (error, results) => {
 		if (error) {
 			return response.status(400).send(error.detail);
 		}
@@ -42,7 +42,32 @@ const createNewMedication = (request, response) => {
 	);
 };
 
+const getMedicationDetails = (request, response) => {
+	const medicationId = parseInt(request.query.medicationId);
+	if (!request.query.medicationId) {
+		return response
+			.status(400)
+			.json({ error: "required field 'medicationId' missing, please correct and send request again" });
+	};
+	//validation to check the paramter is a number only
+	if (isNaN(medicationId)) {
+		return response
+			.status(400)
+			.json({ error: "required field 'medicationId' needs to be a number, please correct and send request again" });
+	};
+
+	pool.query('SELECT medication, dose, freq, notes, "inUse" FROM medication WHERE id = $1', [medicationId], (error, results) => {
+		if (error) {
+			return response.status(400).send(error.detail);
+		}
+		response.status(200).json(results.rows);
+	});
+
+
+};
+
 module.exports = {
 	getUsersMedications,
 	createNewMedication,
+	getMedicationDetails,
 };
