@@ -35,7 +35,7 @@ const createNewMedication = (request, response) => {
 		[medication, dose, freq, notes, userId],
 		(error, results) => {
 			if (error) {
-				throw error;
+				return response.status(400).send(error.detail);
 			}
 			response.status(200).json(results.rows);
 		}
