@@ -1,5 +1,6 @@
 const { pool } = require("../connection");
 
+//this endpoint gathers all medication for a given user, takes the parameters ID to assign to the user queried
 const getUsersMedications = (request, response) => {
 	//validation to see if ID field has been entered as parameter in request
 	const userId = parseInt(request.query.ID);
@@ -8,6 +9,7 @@ const getUsersMedications = (request, response) => {
 			.status(400)
 			.json({ error: "required field 'ID' missing, please correct and send request again" });
 	}
+	//validation to check the paramter is a number only
 	if (isNaN(userId)) {
 		return response
 			.status(400)
