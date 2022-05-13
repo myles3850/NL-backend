@@ -1,4 +1,5 @@
 const { pool } = require('../connection');
+const bcrypt = require('bcrypt');
 
 const getUsers = (request, response) => {
 	pool.query("SELECT * FROM users ORDER BY id ASC", (error, results) => {
@@ -20,16 +21,24 @@ const getUserById = (request, response) => {
 	});
 };
 
-const createUser = (request, response) => {
-	const { name, email } = request.body;
+const createUser = async (request, response) => {
+	const { name, email, password } = request.body;
 
-	pool.query("INSERT INTO users (name, email) VALUES ($1, $2)", [name, email], (error, results) => {
-		if (error) {
-			response.status(409).send(error.detail);
-		} else {
-			response.status(201).send(`User: ${name} created sucsessfully`);
-		}
-	});
+  try {
+    const insertUserQuery = "INSERT INTO users (name, email) VALUES ($1, $2) RETURNING id";
+    const insertUser = await pool.query(insertUserQuery, [name, email]);
+
+    const userId = insertUser.rows[0].id;
+    const salt = await bcrypt.genSalt();
+    const hash = await bcrypt.hash(password, salt);
+
+    const insertCredentialQuery = "INSERT INTO credential (user_id, salt, hashed_password) VALUES ($1, $2, $3)";
+    await pool.query(insertCredentialQuery, [userId, salt, hash]);
+
+    return response.status(201).send(`User: ${name} created successfully`);
+  } catch (e) {
+    return response.status(500).send(e.detail);
+  }
 };
 
 const updateUser = (request, response) => {

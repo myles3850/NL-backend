@@ -2,6 +2,7 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const userRoutes = require("./data/controllers/userController");
 const medRoutes = require("./data/controllers/medicationController");
+const authRoutes = require("./data/controllers/authController");
 
 const app = express();
 const port = 3000;
@@ -15,6 +16,7 @@ app.get("/", (request, response) => {
 
 app.use("/users", userRoutes);
 app.use("/medications", medRoutes);
+app.use("/auth", authRoutes);
 
 app.listen(port, () => {
 	console.log(`App running on port ${port}.`);
