@@ -24,12 +24,15 @@ const getUsersMedications = (request, response) => {
 	});
 };
 
-const createNewMedication = (request, response) => {
-	const { medication, userId, dose, freq, notes } = parseInt(request.body);
 
+// endpoint to create new medications the user is taking
+const createNewMedication = (request, response) => {
+	const { medication, userId, dose, freq, notes } = request.body;
+
+	//query will insert NULL when the variables are set to either NULL or undefined, so no pre-capture required
 	pool.query(
-		"INSERT INTO medication (medication, user, dose, freq, notes) VALUES($1, $2, $3, $4, $5) RETURNING medication",
-		[medication, userId, dose, freq, notes],
+		'INSERT INTO medication (medication, dose, freq, notes, "userId") VALUES ($1, $2, $3, $4, $5) RETURNING medication',
+		[medication, dose, freq, notes, userId],
 		(error, results) => {
 			if (error) {
 				throw error;
