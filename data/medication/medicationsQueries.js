@@ -24,18 +24,22 @@ const getUsersMedications = (request, response) => {
 	});
 };
 
-const getUserById = (request, response) => {
-	const id = parseInt(request.params.id);
+const createNewMedication = (request, response) => {
+	const { medication, userId, dose, freq, notes } = parseInt(request.body);
 
-	pool.query("SELECT * FROM users WHERE id = $1", [id], (error, results) => {
-		if (error) {
-			throw error;
+	pool.query(
+		"INSERT INTO medication (medication, user, dose, freq, notes) VALUES($1, $2, $3, $4, $5) RETURNING medication",
+		[medication, userId, dose, freq, notes],
+		(error, results) => {
+			if (error) {
+				throw error;
+			}
+			response.status(200).json(results.rows);
 		}
-		response.status(200).json(results.rows);
-	});
+	);
 };
 
 module.exports = {
 	getUsersMedications,
-	getUserById,
+	createNewMedication,
 };
