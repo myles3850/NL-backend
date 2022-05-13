@@ -16,7 +16,7 @@ const getUsersMedications = (request, response) => {
 			.json({ error: "required field 'ID' needs to be a number, please correct and send request again" });
 	}
 
-	pool.query("SELECT * FROM medication WHERE user = $1", [userId], (error, results) => {
+	pool.query('SELECT * FROM medication WHERE "userId" = $1 AND "inUse" = true', [userId], (error, results) => {
 		if (error) {
 			return response.status(400).send(error.detail);
 		}
