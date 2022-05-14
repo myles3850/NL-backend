@@ -6,6 +6,7 @@ var medRoutes = express.Router();
 //this controller is responsable for all the routes needed for the medication endpoints. the endpints are grouped by url
 
 medRoutes.get("/", db.getUsersMedications);
+medRoutes.get('/:medicationId', db.getMedicationDetails)
 medRoutes.post('/', db.createNewMedication);
 
 module.exports = medRoutes;
