@@ -43,8 +43,8 @@ const createNewMedication = (request, response) => {
 };
 
 const getMedicationDetails = (request, response) => {
-	const medicationId = parseInt(request.query.medicationId);
-	if (!request.query.medicationId) {
+	const medicationId = parseInt(request.params.medicationId);
+	if (!request.params.medicationId) {
 		return response
 			.status(400)
 			.json({ error: "required field 'medicationId' missing, please correct and send request again" });
