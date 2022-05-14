@@ -44,11 +44,6 @@ const createNewMedication = (request, response) => {
 
 const getMedicationDetails = (request, response) => {
 	const medicationId = parseInt(request.params.medicationId);
-	if (!request.params.medicationId) {
-		return response
-			.status(400)
-			.json({ error: "required field 'medicationId' missing, please correct and send request again" });
-	};
 	//validation to check the paramter is a number only
 	if (isNaN(medicationId)) {
 		return response
@@ -62,8 +57,17 @@ const getMedicationDetails = (request, response) => {
 		}
 		response.status(200).json(results.rows);
 	});
+};
 
+const setMedicationNotInUse = (request, response) => {
+	const medicationId = parseInt(request.query.medicationId);
 
+	pool.query('UPDATE medication SET "inUse" = false WHERE id = $1', [medicationId], (error, results) => {
+		if (error){
+			return response.status(400).send(error.detail);
+		}
+		return response.status(200).json({message:'medication disabled'});
+	});
 };
 
 module.exports = {
