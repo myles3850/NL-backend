@@ -1,13 +1,13 @@
 const express = require("express");
-const db  = require('../users/userQueries');
+const userQueries = require('../users/userQueries');
 
 var userRoutes = express.Router();
 
-userRoutes.get("/", db.getUsers);
-userRoutes.post("/", db.createUser);
+userRoutes.get("/", userQueries.getUsers);
+userRoutes.post("/", userQueries.createUser);
 
-userRoutes.get("/:id", db.getUserById);
-userRoutes.put("/:id", db.updateUser);
-userRoutes.delete("/:id", db.deleteUser);
+userRoutes.get("/:id", userQueries.getUserById);
+userRoutes.put("/:id", userQueries.updateUser);
+userRoutes.delete("/:id", userQueries.deleteUser);
 
 module.exports = userRoutes;
