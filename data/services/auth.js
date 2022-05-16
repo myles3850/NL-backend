@@ -7,7 +7,7 @@ const login = async (request, response) => {
   try {
     const getUserCredentialQuery = `
     SELECT credentials.hashed_password AS hash, credentials.salt AS salt
-    FROM credential
+    FROM credentials
     INNER JOIN users ON users.id = credentials.user_id
     WHERE users.email = $1
     `;
