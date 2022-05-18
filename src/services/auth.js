@@ -29,7 +29,7 @@ const login = async (request, response) => {
       return response.status(httpStatusCode.UNAUTHORIZED).send(responseObj);
     }
 
-    // postgres is so stupid that it doesn't support aliases in camelCase,
+    // postgres doesn't support aliases in camelCase,
     // so we have to create constants from db columns returned...
     const { hashed_password, salt, name, id } = userCredential.rows[0];
     const hashStored = hashed_password;
