@@ -1,8 +1,8 @@
 const express = require("express");
 const bodyParser = require("body-parser");
-const userRoutes = require("./data/controllers/userController");
-const medRoutes = require("./data/controllers/medicationController");
-const authRoutes = require("./data/controllers/authController");
+const userRoutes = require("./controllers/userController");
+const medRoutes = require("./controllers/medicationController");
+const authRoutes = require("./controllers/authController");
 
 const app = express();
 const port = 3000;

@@ -1,12 +1,13 @@
-const { pool } = require('../connection');
+const { pool } = require('../database/connection');
 const bcrypt = require('bcrypt');
+const { httpStatusCode } = require('../utils/constants');
 
 const getUsers = (request, response) => {
 	pool.query("SELECT * FROM users ORDER BY id ASC", (error, results) => {
 		if (error) {
-			return response.status(409).send(error.detail);
+			return response.status(httpStatusCode.INTERNAL_SERVER_ERROR).send(error.detail);
 		}
-		return response.status(200).json(results.rows);
+		return response.status(httpStatusCode.OK).json(results.rows);
 	});
 };
 
@@ -15,9 +16,9 @@ const getUserById = (request, response) => {
 
 	pool.query("SELECT * FROM users WHERE id = $1", [id], (error, results) => {
 		if (error) {
-			return response.status(409).send(error.detail);
+			return response.status(httpStatusCode.INTERNAL_SERVER_ERROR).send(error.detail);
 		}
-		response.status(200).json(results.rows);
+		response.status(httpStatusCode.OK).json(results.rows);
 	});
 };
 
@@ -35,9 +36,9 @@ const createUser = async (request, response) => {
     const insertCredentialQuery = "INSERT INTO credentials (user_id, salt, hashed_password) VALUES ($1, $2, $3)";
     await pool.query(insertCredentialQuery, [userId, salt, hash]);
 
-    return response.status(201).send(`User: ${name} created successfully`);
+    return response.status(httpStatusCode.CREATED).send(`User: ${name} created successfully`);
   } catch (e) {
-    return response.status(500).send(e.detail);
+    return response.status(httpStatusCode.INTERNAL_SERVER_ERROR).send(e.detail);
   }
 };
 
@@ -47,9 +48,9 @@ const updateUser = (request, response) => {
 
 	pool.query("UPDATE users SET name = $1, email = $2 WHERE id = $3", [name, email, id], (error, results) => {
 		if (error) {
-			response.status(400).send(error.detail);
+			response.status(httpStatusCode.BAD_REQUEST).send(error.detail);
 		} else {
-			response.status(200).send(`User modified with ID: ${id}`);
+			response.status(httpStatusCode.CREATED).send(`User modified with ID: ${id}`);
 		}
 	});
 };
@@ -61,7 +62,7 @@ const deleteUser = (request, response) => {
 		if (error) {
 			throw error;
 		}
-		response.status(200).send(`User deleted with ID: ${id}`);
+		response.status(httpStatusCode.OK).send(`User deleted with ID: ${id}`);
 	});
 };
 

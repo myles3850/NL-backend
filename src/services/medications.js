@@ -1,4 +1,5 @@
-const { pool } = require("../connection");
+const { pool } = require("../database/connection");
+const { httpStatusCode } = require("../utils/constants");
 
 //this endpoint gathers all medication for a given user, takes the parameters ID to assign to the user queried
 const getUsersMedications = (request, response) => {
@@ -6,21 +7,21 @@ const getUsersMedications = (request, response) => {
 	const userId = parseInt(request.query.ID);
 	if (!request.query.ID) {
 		return response
-			.status(400)
+			.status(httpStatusCode.BAD_REQUEST)
 			.json({ error: "required field 'ID' missing, please correct and send request again" });
 	};
 	//validation to check the paramter is a number only
 	if (isNaN(userId)) {
 		return response
-			.status(400)
+			.status(httpStatusCode.BAD_REQUEST)
 			.json({ error: "required field 'ID' needs to be a number, please correct and send request again" });
 	};
 
 	pool.query('SELECT id, medication, dose, freq FROM medication WHERE "userId" = $1 AND "inUse" = true', [userId], (error, results) => {
 		if (error) {
-			return response.status(400).send(error.detail);
+			return response.status(httpStatusCode.BAD_REQUEST).send(error.detail);
 		}
-		response.status(200).json(results.rows);
+		response.status(httpStatusCode.OK).json(results.rows);
 	});
 };
 
@@ -35,9 +36,9 @@ const createNewMedication = (request, response) => {
 		[medication, dose, freq, notes, userId],
 		(error, results) => {
 			if (error) {
-				return response.status(400).send(error.detail);
+				return response.status(httpStatusCode.BAD_REQUEST).send(error.detail);
 			}
-			response.status(200).json(results.rows);
+			response.status(httpStatusCode.OK).json(results.rows);
 		}
 	);
 };
@@ -47,15 +48,15 @@ const getMedicationDetails = (request, response) => {
 	//validation to check the paramter is a number only
 	if (isNaN(medicationId)) {
 		return response
-			.status(400)
+			.status(httpStatusCode.BAD_REQUEST)
 			.json({ error: "required field 'medicationId' needs to be a number, please correct and send request again" });
 	};
 
 	pool.query('SELECT medication, dose, freq, notes, "inUse" FROM medication WHERE id = $1', [medicationId], (error, results) => {
 		if (error) {
-			return response.status(400).send(error.detail);
+			return response.status(httpStatusCode.BAD_REQUEST).send(error.detail);
 		}
-		response.status(200).json(results.rows);
+		response.status(httpStatusCode.OK).json(results.rows);
 	});
 };
 
@@ -64,9 +65,9 @@ const setMedicationNotInUse = (request, response) => {
 
 	pool.query('UPDATE medication SET "inUse" = false WHERE id = $1', [medicationId], (error, results) => {
 		if (error){
-			return response.status(400).send(error.detail);
+			return response.status(httpStatusCode.BAD_REQUEST).send(error.detail);
 		}
-		return response.status(200).json({message:'medication disabled'});
+		return response.status(httpStatusCode.OK).json({message:'medication disabled'});
 	});
 };
 
