@@ -10,4 +10,6 @@ const pool = new Pool({
 	port: process.env.SQLPORT,
 });
 
-module.exports = {pool};
+module.exports = {
+  pool
+};
