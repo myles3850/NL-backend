@@ -1,6 +1,6 @@
-const { pool } = require('../database/connection');
-const bcrypt = require('bcrypt');
-const { httpStatusCode } = require('../utils/constants');
+const { pool } = require("../database/connection");
+const bcrypt = require("bcrypt");
+const { httpStatusCode } = require("../utils/constants");
 
 const getUsers = (request, response) => {
 	pool.query("SELECT * FROM users ORDER BY id ASC", (error, results) => {
@@ -25,27 +25,30 @@ const getUserById = (request, response) => {
 const createUser = async (request, response) => {
 	const { name, email, password } = request.body;
 
-	if (!name || !email || !password){
-		console.log("were going to fail");
+	if (!name || !email || !password) {
+		return response
+			.status(httpStatusCode.INTERNAL_SERVER_ERROR)
+			.send({
+				error: "missing required parameter",
+				requiredParameters: { name: "string", email: "string", password: "string" },
+			});
 	}
 
-  try {
-	
-	
-	const insertUserQuery = "INSERT INTO users (name, email) VALUES ($1, $2) RETURNING id";
-	const insertUser = await pool.query(insertUserQuery, [name, email]);
+	try {
+		const insertUserQuery = "INSERT INTO users (name, email) VALUES ($1, $2) RETURNING id";
+		const insertUser = await pool.query(insertUserQuery, [name, email]);
 
-	const userId = insertUser.rows[0].id;
-	const salt = await bcrypt.genSalt();
-	const hash = await bcrypt.hash(password, salt);
+		const userId = insertUser.rows[0].id;
+		const salt = await bcrypt.genSalt();
+		const hash = await bcrypt.hash(password, salt);
 
-    const insertCredentialQuery = "INSERT INTO credentials (user_id, salt, hashed_password) VALUES ($1, $2, $3)";
-    await pool.query(insertCredentialQuery, [userId, salt, hash]);
+		const insertCredentialQuery = "INSERT INTO credentials (user_id, salt, hashed_password) VALUES ($1, $2, $3)";
+		await pool.query(insertCredentialQuery, [userId, salt, hash]);
 
-    return response.status(httpStatusCode.CREATED).send(`User: ${name} created successfully`);
-  } catch (e) {
-    return response.status(httpStatusCode.INTERNAL_SERVER_ERROR).send(e.detail);
-  }
+		return response.status(httpStatusCode.CREATED).send(`User: ${name} created successfully`);
+	} catch (e) {
+		return response.status(httpStatusCode.INTERNAL_SERVER_ERROR).send(e.detail);
+	}
 };
 
 const updateUser = (request, response) => {
@@ -80,6 +83,4 @@ module.exports = {
 	deleteUser,
 };
 
-function validateUserData(userData) {
-
-}
+function validateUserData(userData) {}
