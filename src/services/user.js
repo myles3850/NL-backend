@@ -26,7 +26,7 @@ const createUser = async (request, response) => {
 	const { name, email, password } = request.body;
 
   try {
-	//creating the salf first so if there is no password we trip over before creating the account
+	//creating the salt first so if there is no password we trip over before creating the account
 	const userId = insertUser.rows[0].id;
 	const salt = await bcrypt.genSalt();
 	const hash = await bcrypt.hash(password, salt);
