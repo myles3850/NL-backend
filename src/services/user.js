@@ -26,13 +26,14 @@ const createUser = async (request, response) => {
 	const { name, email, password } = request.body;
 
   try {
-    const insertUserQuery = "INSERT INTO users (name, email) VALUES ($1, $2) RETURNING id";
-    const insertUser = await pool.query(insertUserQuery, [name, email]);
+	//creating the salf first so if there is no password we trip over before creating the account
+	const userId = insertUser.rows[0].id;
+	const salt = await bcrypt.genSalt();
+	const hash = await bcrypt.hash(password, salt);
 
-    const userId = insertUser.rows[0].id;
-    const salt = await bcrypt.genSalt();
-    const hash = await bcrypt.hash(password, salt);
-
+	const insertUserQuery = "INSERT INTO users (name, email) VALUES ($1, $2) RETURNING id";
+	const insertUser = await pool.query(insertUserQuery, [name, email]);
+	  
     const insertCredentialQuery = "INSERT INTO credentials (user_id, salt, hashed_password) VALUES ($1, $2, $3)";
     await pool.query(insertCredentialQuery, [userId, salt, hash]);
 
