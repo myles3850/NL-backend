@@ -25,6 +25,10 @@ const getUserById = (request, response) => {
 const createUser = async (request, response) => {
 	const { name, email, password } = request.body;
 
+	if (!name || !email || !password){
+		console.log("were going to fail");
+	}
+
   try {
 	
 	
@@ -75,3 +79,7 @@ module.exports = {
 	updateUser,
 	deleteUser,
 };
+
+function validateUserData(userData) {
+
+}
