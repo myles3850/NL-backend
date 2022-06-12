@@ -5,7 +5,7 @@ const medRoutes = require("./controllers/medicationController");
 const authRoutes = require("./controllers/authController");
 
 const app = express();
-const port = process.env.APP_PORT;
+const port = process.env.APP_PORT || 80;
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
