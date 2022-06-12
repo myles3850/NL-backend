@@ -2,6 +2,8 @@
 
 -- DROP TABLE IF EXISTS public.users;
 
+CREATE SEQUENCE users_id_seq;
+
 CREATE TABLE IF NOT EXISTS public.users
 (
     name text COLLATE pg_catalog."default" NOT NULL,
@@ -14,4 +16,4 @@ CREATE TABLE IF NOT EXISTS public.users
 TABLESPACE pg_default;
 
 ALTER TABLE IF EXISTS public.users
-    OWNER to nladac;
+    OWNER to postgres;
