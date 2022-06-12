@@ -18,6 +18,6 @@ app.use("/users", userRoutes);
 app.use("/medications", medRoutes);
 app.use("/auth", authRoutes);
 
-app.listen(port || 3000, () => {
+app.listen(3000, () => {
 	console.log(`App running on port ${port}.`);
 });
