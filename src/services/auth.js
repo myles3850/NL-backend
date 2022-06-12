@@ -49,7 +49,7 @@ const login = async (request, response) => {
       email,
       userId
     };
-    const jwtKey = process.env.JWT_KEY;
+    const jwtKey = process.env.JWT_SECRET;
     const jwtToken = jwt.sign(jwtPayload, jwtKey, {
       algorithm: "HS256",
       expiresIn: "30min"
