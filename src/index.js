@@ -5,7 +5,7 @@ const medRoutes = require("./controllers/medicationController");
 const authRoutes = require("./controllers/authController");
 
 const app = express();
-const port = process.env.APP_PORT;
+const port = process.env.APP_PORT || process.env.PORT;
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -18,6 +18,6 @@ app.use("/users", userRoutes);
 app.use("/medications", medRoutes);
 app.use("/auth", authRoutes);
 
-app.listen(4000, () => {
+app.listen(port, () => {
 	console.log(`App running on port ${port}.`);
 });
