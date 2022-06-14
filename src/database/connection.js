@@ -13,7 +13,7 @@ if (!process.env.DATABASE_URL) {
 
 
 
-const pool = new Pool({conn});
+const pool = new Pool({conn,});
 
 module.exports = {
   pool
