@@ -6,7 +6,6 @@ var connString = process.env.DATABASE_URL;
 
 if (typeof connString === 'string') {
 	connString = parse(connString);
-	console.log(connString);
 } else {
 	connString = {
 		user: process.env.SQLUSER,
@@ -17,6 +16,7 @@ if (typeof connString === 'string') {
 	}
 }
 
+console.log(connString);
 const pool = new Pool(connString);
 
 module.exports = {
