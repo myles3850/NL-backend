@@ -17,7 +17,7 @@ if (typeof connString === 'string') {
 }
 
 console.log(connString);
-const pool = new Pool(connString);
+const pool = new Pool({connString});
 
 module.exports = {
 	pool,
