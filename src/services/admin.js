@@ -9,7 +9,7 @@ const createDatabase = (request, response) => {
 	}
 	if (password === process.env.JWT_PASSWORD) {
 		const query = `
-		CREATE SEQUENCE users_id_seq;
+		CREATE SEQUENCE IF NOT EXISTS users_id_seq;
 		CREATE TABLE IF NOT EXISTS users
 		(
 			name text COLLATE pg_catalog."default" NOT NULL,
@@ -28,7 +28,7 @@ const createDatabase = (request, response) => {
 			FOREIGN KEY (user_id)
 			REFERENCES users (id)
 		);
-			CREATE TABLE medication(
+			CREATE TABLE IF NOT EXISTS medication(
 			id serial NOT NULL,
 			medication text NOT NULL,
 			"inUse" boolean NOT NULL DEFAULT true,
