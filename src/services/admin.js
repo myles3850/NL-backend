@@ -1,16 +1,14 @@
-
-const {pool} = require('../database/connection');
-const {message, httpStatusCode} = require("../utils/constants");
-
+const { pool } = require('../database/connection');
+const { message, httpStatusCode } = require('../utils/constants');
 
 const createDatabase = (request, response) => {
-	const {password} = request.body;
-
+	const { password } = request.body;
+	console.log(process.env.JWT_PASSWORD);
 	if (!password) {
-		return response.status(httpStatusCode.INTERNAL_SERVER_ERROR).json({error:message.INVALID_REQUEST})
+		return response.status(httpStatusCode.INTERNAL_SERVER_ERROR).json({ error: message.INVALID_REQUEST });
 	}
-
-	const query = `
+	if (password === process.env.JWT_PASSWORD) {
+		const query = `
 		CREATE SEQUENCE users_id_seq;
 		CREATE TABLE IF NOT EXISTS users
 		(
@@ -43,13 +41,16 @@ const createDatabase = (request, response) => {
 				REFERENCES users (id) MATCH SIMPLE
 				ON UPDATE NO ACTION
 				ON DELETE NO ACTION
-		);`
-	pool.query(query, (error, results) => {
-		if (error) {
-			return response.status(httpStatusCode.INTERNAL_SERVER_ERROR).json(error.message)
-		}
-		return response.status(httpStatusCode.CREATED).json({done:true});
-	})
-}
+		);`;
+		pool.query(query, (error, results) => {
+			if (error) {
+				return response.status(httpStatusCode.INTERNAL_SERVER_ERROR).json(error.message);
+			}
+			return response.status(httpStatusCode.CREATED).json({ done: true });
+		});
+	} else {
+		return response.status(httpStatusCode.INTERNAL_SERVER_ERROR).json({ error: message.INVALID_REQUEST });
+	}
+};
 
-module.exports = {createDatabase};
+module.exports = { createDatabase };
