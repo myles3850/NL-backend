@@ -10,8 +10,8 @@ const createDatabase = (request, response) => {
 	if (password === process.env.JWT_PASSWORD) {
 		const query = `
 		CREATE SEQUENCE IF NOT EXISTS users_id_seq;
-		CREATE TABLE IF NOT EXISTS users
-		(
+
+		CREATE TABLE IF NOT EXISTS users (
 			name text COLLATE pg_catalog."default" NOT NULL,
 			email text COLLATE pg_catalog."default" NOT NULL,
 			id integer NOT NULL DEFAULT nextval('users_id_seq'::regclass),
@@ -19,7 +19,7 @@ const createDatabase = (request, response) => {
 			CONSTRAINT userid UNIQUE (id)
 		);
 		ALTER TABLE users
-		ADD CONSTRAINT unique_email UNIQUE (email);
+			ADD CONSTRAINT IF NOT EXISTS unique_email UNIQUE (email);
 
 		CREATE TABLE IF NOT EXISTS credentials (
 			user_id INT UNIQUE NOT NULL,
@@ -28,7 +28,7 @@ const createDatabase = (request, response) => {
 			FOREIGN KEY (user_id)
 			REFERENCES users (id)
 		);
-			CREATE TABLE IF NOT EXISTS medication(
+		CREATE TABLE IF NOT EXISTS medication (
 			id serial NOT NULL,
 			medication text NOT NULL,
 			"inUse" boolean NOT NULL DEFAULT true,
