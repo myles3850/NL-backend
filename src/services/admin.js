@@ -3,7 +3,6 @@ const { message, httpStatusCode } = require('../utils/constants');
 
 const createDatabase = (request, response) => {
 	const { password } = request.body;
-	console.log(process.env.JWT_PASSWORD);
 	if (!password) {
 		return response.status(httpStatusCode.INTERNAL_SERVER_ERROR).json({ error: message.INVALID_REQUEST });
 	}
