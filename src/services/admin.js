@@ -16,10 +16,9 @@ const createDatabase = (request, response) => {
 			email text COLLATE pg_catalog."default" NOT NULL,
 			id integer NOT NULL DEFAULT nextval('users_id_seq'::regclass),
 			CONSTRAINT users_pkey PRIMARY KEY (email),
-			CONSTRAINT userid UNIQUE (id)
+			CONSTRAINT userid UNIQUE (id),
+			CONSTRAINT unique_email UNIQUE (email)
 		);
-		ALTER TABLE users
-			ADD CONSTRAINT IF NOT EXISTS unique_email UNIQUE (email);
 
 		CREATE TABLE IF NOT EXISTS credentials (
 			user_id INT UNIQUE NOT NULL,
