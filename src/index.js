@@ -1,4 +1,5 @@
 const express = require("express");
+const cors = require("cors");
 const bodyParser = require("body-parser");
 const userRoutes = require("./controllers/userController");
 const medRoutes = require("./controllers/medicationController");
@@ -7,6 +8,7 @@ const authRoutes = require("./controllers/authController");
 const app = express();
 const port = process.env.APP_PORT || process.env.PORT;
 
+app.use(cors())
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
