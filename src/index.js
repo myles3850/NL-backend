@@ -4,6 +4,7 @@ const bodyParser = require('body-parser');
 const userRoutes = require('./controllers/userController');
 const medRoutes = require('./controllers/medicationController');
 const authRoutes = require('./controllers/authController');
+const adminRoutes = require('./controllers/adminController');
 
 const app = express();
 const port = process.env.APP_PORT || process.env.PORT;
