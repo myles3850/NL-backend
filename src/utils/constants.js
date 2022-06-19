@@ -1,6 +1,7 @@
 const message = Object.freeze({
   INCORRECT_CREDENTIALS: "Incorrect credentials, please use a valid one",
-  AUTHORISED: "Authorized"
+  AUTHORISED: "Authorized",
+  INVALID_REQUEST: "Request Invalid"
 });
 
 const httpStatusCode = Object.freeze({
