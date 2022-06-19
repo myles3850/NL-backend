@@ -10,7 +10,7 @@ const port = process.env.APP_PORT || process.env.PORT;
 
 app.use(
 	cors({
-		origin: ['http://localhost:4000'],
+		origin: process.env.CORS_APPROVED_ADDRESSES,
 	})
 );
 
