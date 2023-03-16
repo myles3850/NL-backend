@@ -11,13 +11,8 @@ const port = process.env.APP_PORT || process.env.PORT;
 
 var whitelist = process.env.CORS_APPROVED_ADDRESSES;
 var corsOptions = {
-	origin: function (origin, callback) {
-		if (whitelist.indexOf(origin) !== -1) {
-			callback(null, true);
-		} else {
-			callback(new Error('Not allowed by CORS'));
-		}
-	},
+	origin: true,
+	
 };
 
 app.use(cors(corsOptions));
