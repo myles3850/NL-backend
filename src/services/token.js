@@ -21,7 +21,6 @@ const authenticateAPIRequest = async (request, response) => {
 	const secretCredentials = await pool.query(captureQuery, [ID]);
 	
 	if (!secretCredentials.rowCount) {
-		console.log('here')
 		responseObj.message = message.INCORRECT_CREDENTIALS;
 		return response.status(httpStatusCode.UNAUTHORIZED).send(responseObj);
 	}
@@ -31,8 +30,6 @@ const authenticateAPIRequest = async (request, response) => {
 	const givenPassword = await bcrypt.hash(secret, salt);
 
 	const matchingPassword = givenPassword === hashedPassword.toString();
-	console.log(hashedPassword)
-	console.log(givenPassword)
 	
 	if (!matchingPassword){
 		responseObj.message = message.INCORRECT_CREDENTIALS;
