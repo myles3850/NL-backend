@@ -12,10 +12,11 @@ const authenticateAPIRequest = async (request, response) => {
 	}
 
 	const captureQuery = `
-	SELECT TOP 1 salt, hashed_password FROM credentials
+	SELECT salt, hashed_password FROM credentials
 	WHERE user_type = 2 AND user_id IN (
 		SELECT user_id FROM users WHERE is_api_user = true 
 		AND email = $1)
+	fetch first 1 rows only
 	`
 	//todo - capture the credentials and return a test token built from the credentials sent
 	const secretCredentials = await pool.query(captureQuery, [ID,]);
