@@ -29,7 +29,7 @@ const authenticateAPIRequest = async (request, response) => {
 	const hashedPassword = hashed_password;
 	const givenPassword = await bcrypt.hash(secret, salt);
 
-	const matchingPassword = givenPassword === hashedPassword.toString();
+	const matchingPassword = givenPassword === hashedPassword;
 	
 	if (!matchingPassword){
 		responseObj.message = message.INCORRECT_CREDENTIALS;
