@@ -4,6 +4,11 @@ const { message, httpStatusCode } = require('../utils/constants');
 
 
 const authenticateAPIRequest = async (request, response) => {
+	const {ID, secret} = request.params;
+	
+	const responseObj = {
+		sucsess: false,
+	}
 
 	const captureQuery = `
 	SELECT TOP 1 salt, hashed_password FROM credentials
@@ -11,12 +16,8 @@ const authenticateAPIRequest = async (request, response) => {
 		SELECT user_id FROM users WHERE is_api_user = true 
 		AND email = $1)
 	`
+	
 
-	const responseObj = {
-		sucsess: false,
-	}
-
-	const {ID, secret} = request.params;
 	//todo - capture the credentials and return a test token built from the credentials sent
 	const secretCredentials = await pool.query(captureQuery, [ID,]);
 	
@@ -24,6 +25,8 @@ const authenticateAPIRequest = async (request, response) => {
 		responseObj.message = message.INCORRECT_CREDENTIALS;
 		return response.status(httpStatusCode.UNAUTHORIZED).send(responseObj);
 	}
+
+
 	
 };
 
