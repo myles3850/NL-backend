@@ -1,3 +1,4 @@
+const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const { pool } = require('../database/connection');
 const { message, httpStatusCode } = require('../utils/constants');
@@ -16,8 +17,6 @@ const authenticateAPIRequest = async (request, response) => {
 		SELECT user_id FROM users WHERE is_api_user = true 
 		AND email = $1)
 	`
-	
-
 	//todo - capture the credentials and return a test token built from the credentials sent
 	const secretCredentials = await pool.query(captureQuery, [ID,]);
 	
@@ -26,8 +25,20 @@ const authenticateAPIRequest = async (request, response) => {
 		return response.status(httpStatusCode.UNAUTHORIZED).send(responseObj);
 	}
 
-
+	const {salt, hashed_password} = secretCredentials.rows[0];
+	const hashedPassword = hashed_password;
 	
+	const givenPassword = bcrypt.hash(secret, salt);
+
+	if (givenPassword != hashedPassword){
+		responseObj.message = message.INCORRECT_CREDENTIALS;
+		return response.status(httpStatusCode.UNAUTHORIZED).send(responseObj);
+	} else {
+		responseObj.sucsess = true;
+		responseObj.message = message.AUTHORISED;
+		return response.status(httpStatusCode.AUTHORISED).send(responseObj);
+	}
+
 };
 
 module.exports = {
