@@ -2,7 +2,7 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const { pool } = require('../database/connection');
 const { message, httpStatusCode } = require('../utils/constants');
-const { randomNumberToString } = require('../utils/functions');
+const { randomNumberToString, getCurrentTimeFromStamp } = require('../utils/functions');
 
 const authenticateAPIRequest = async (request, response) => {
 	const { client_id, client_secret } = request.body;
@@ -76,13 +76,6 @@ const authenticateAPIRequest = async (request, response) => {
 	}
 };
 
-getCurrentTimeFromStamp = function() {
-	let timestamp = Date.now()
-    var d = new Date(timestamp);
-
-    timeStampCon = d.getFullYear() +'/' +(d.getMonth() +1) + '/'+ d.getDate() + " " + d.getHours() + ':' + d.getMinutes();
-    return timeStampCon;
-};
 
 module.exports = {
 	authenticateAPIRequest,
