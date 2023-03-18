@@ -1,23 +1,24 @@
 const jwt = require('jsonwebtoken');
 const { pool } = require("../database/connection");
 const { httpStatusCode, message } = require("../utils/constants");
+const { getCurrentTimeFromStamp } = require('../utils/functions');
 
 
 async function apiAuthVerification(request, response, next) {
 	const token = request.get('Authorization');
 
-	const isAuthroised = false;
+	let isAuthroised = false;
 
 	if (token === undefined) {
 		return response.status(httpStatusCode.UNAUTHORIZED).send(message.INCORRECT_CREDENTIALS);
 	}
 
 	const getLastQueryForUser = `
-	SELECT last_query FROM api_users 
+	SELECT last_query FROM api_tokens 
 	WHERE token = $1`;
 
 	const updateLastQueryTime = `
-	UPDATE api_users
+	UPDATE api_tokens
 	SET last_query = $1 
 	WHERE token = $2`;
 
@@ -33,12 +34,13 @@ async function apiAuthVerification(request, response, next) {
 			//return token not recognised
 			return response.status(httpStatusCode.UNAUTHORIZED).send(message.INCORRECT_CREDENTIALS);
 		}
-		await pool.query(updateLastQueryTime, [Date.now(), jwtPayload.token]);
+		await pool.query(updateLastQueryTime, [getCurrentTimeFromStamp(), jwtPayload.token]);
 		isAuthroised = true
 
 
 	} catch (e) {
 		//return system error if anything falls over to here
+		console.log(e)
 		return response.status(httpStatusCode.INTERNAL_SERVER_ERROR).send(message.INVALID_REQUEST);
 	}
 
