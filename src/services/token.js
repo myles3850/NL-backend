@@ -2,6 +2,7 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const { pool } = require('../database/connection');
 const { message, httpStatusCode } = require('../utils/constants');
+const { randomNumberToString } = require('../utils/functions');
 
 const authenticateAPIRequest = async (request, response) => {
 	const { ID, secret } = request.body;
@@ -33,11 +34,28 @@ const authenticateAPIRequest = async (request, response) => {
 		if (!matchingPassword) {
 			responseObj.message = message.INCORRECT_CREDENTIALS;
 			return response.status(httpStatusCode.UNAUTHORIZED).send(responseObj);
-		} else {
+		}//  else {
+		// 	responseObj.sucsess = true;
+		// 	responseObj.message = message.AUTHORISED;
+		// 	return response.status(httpStatusCode.CREATED).send(responseObj);
+		// }
+
+		const token = randomNumberToString() + randomNumberToString();
+
+		const jwtKey = process.env.JWT_SECRET;
+		const jwtPayload = {
+			token : token,
+			iss : Date.now(),
+			scope : 'all',
+		};
+
+		const jwtToken = jwt.sign(jwtPayload, jwtKey, {algorithm:'HS256',})
+
 			responseObj.sucsess = true;
-			responseObj.message = message.AUTHORISED;
+			responseObj.token = jwtToken;
 			return response.status(httpStatusCode.CREATED).send(responseObj);
-		}
+
+
 	} catch (e) {
 		console.error(e);
 		return response(httpStatusCode.INTERNAL_SERVER_ERROR).send({
