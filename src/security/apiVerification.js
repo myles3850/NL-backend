@@ -29,6 +29,7 @@ async function apiAuthVerification(request, response, next) {
 
 		if (!userTime.rowCount) {
 			//return token not recognised
+			return response.status(httpStatusCode.UNAUTHORIZED).send(message.INCORRECT_CREDENTIALS);
 		}
 		await pool.query(updateLastQueryTime, [Date.now(), jwtPayload.token]);
 
@@ -36,6 +37,7 @@ async function apiAuthVerification(request, response, next) {
 
 	} catch (e) {
 		//return system error if anything falls over to here
+		return response.status(httpStatusCode.INTERNAL_SERVER_ERROR).send(message.INVALID_REQUEST);
 	}
 
 	//only call this once you have verified the token being sent is trusetd AND we have logged the access
