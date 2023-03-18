@@ -24,20 +24,25 @@ const authenticateAPIRequest = async (request, response) => {
 		responseObj.message = message.INCORRECT_CREDENTIALS;
 		return response.status(httpStatusCode.UNAUTHORIZED).send(responseObj);
 	}
-	
-	const {salt, hashed_password} = secretCredentials.rows[0];
-	const hashedPassword = hashed_password;
-	const givenPassword = await bcrypt.hash(secret, salt);
+	try{	
+		const {salt, hashed_password} = secretCredentials.rows[0];
+		const hashedPassword = hashed_password;
+		const givenPassword = await bcrypt.hash(secret, salt);
 
-	const matchingPassword = givenPassword === hashedPassword;
-	
-	if (!matchingPassword){
-		responseObj.message = message.INCORRECT_CREDENTIALS;
-		return response.status(httpStatusCode.UNAUTHORIZED).send(responseObj);
-	} else {
-		responseObj.sucsess = true;
-		responseObj.message = message.AUTHORISED;
-		return response.status(httpStatusCode.CREATED).send(responseObj);
+		const matchingPassword = givenPassword === hashedPassword;
+		
+		if (!matchingPassword){
+			responseObj.message = message.INCORRECT_CREDENTIALS;
+			return response.status(httpStatusCode.UNAUTHORIZED).send(responseObj);
+		} else {
+			responseObj.sucsess = true;
+			responseObj.message = message.AUTHORISED;
+			return response.status(httpStatusCode.CREATED).send(responseObj);
+		}
+	} catch(e){
+		console.error(e);
+		return response(httpStatusCode.INTERNAL_SERVER_ERROR).send({message: 'internal server error'});
+		
 	}
 
 };
