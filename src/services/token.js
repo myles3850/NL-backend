@@ -17,6 +17,11 @@ const authenticateAPIRequest = async (request, response) => {
 		SELECT user_id FROM users WHERE is_api_user = true 
 		AND email = $1)
 	`;
+
+	const loggingQuery = `
+	INSERT INTO api_users (token, last_query) 
+	VALUES ($1, $2)
+	`
 	//todo - capture the credentials and return a test token built from the credentials sent
 	const secretCredentials = await pool.query(captureQuery, [client_id]);
 
@@ -41,11 +46,18 @@ const authenticateAPIRequest = async (request, response) => {
 		// }
 
 		const token = randomNumberToString() + randomNumberToString();
+		const unixIssueTime = Date.now();
+		
+		try {
+			await pool.query(loggingQuery, [token, unixIssueTime])
+		} catch (e) {
+			return response.status(httpStatusCode.INTERNAL_SERVER_ERROR).send(message.INVALID_REQUEST)
+		}
 
 		const jwtKey = process.env.JWT_SECRET;
 		const jwtPayload = {
 			token : token,
-			iss : Date.now(),
+			iss : unixIssueTime,
 			scope : 'all',
 		};
 
