@@ -7,7 +7,7 @@ const createDatabase = (request, response) => {
 	if (!password) {
 		return response.status(httpStatusCode.INTERNAL_SERVER_ERROR).json({ error: message.INVALID_REQUEST });
 	}
-	if (password === process.env.JWT_PASSWORD) {
+	if (password === process.env.DB_MIGRATION_KEY) {
 		pool.query(createScript, (error, results) => {
 			if (error) {
 				return response.status(httpStatusCode.INTERNAL_SERVER_ERROR).json(error.message);
