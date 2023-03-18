@@ -5,7 +5,7 @@ const userRoutes = require('./controllers/userController');
 const medRoutes = require('./controllers/medicationController');
 const authRoutes = require('./controllers/authController');
 const adminRoutes = require('./controllers/adminController');
-const { authenticateAPIRequest } = require('./services/token');
+const { apiAuthVerification } = require('./security/apiVerification');
 
 const app = express();
 const port = process.env.APP_PORT || process.env.PORT;
@@ -24,11 +24,16 @@ app.get('/', (request, response) => {
 	response.json({ info: 'Node.js, Express, and Postgres API', text: 'pie' });
 });
 
-app.use('/users', userRoutes);
-app.use('/medications', medRoutes);
+//most routed are beign protested at thsi level with the verification function
+//this will check the token passed through ad ensure the system calling the API
+//is autheticated
+
+//the auth controller runs the checks inside as the token enpoint is managed by the controller
+
 app.use('/auth', authRoutes);
-app.use('/admin', adminRoutes);
-app.post('/token', authenticateAPIRequest);
+app.use('/users',apiAuthVerification, userRoutes);
+app.use('/medications',apiAuthVerification, medRoutes);
+app.use('/admin',apiAuthVerification, adminRoutes);
 
 app.listen(port, () => {
 	console.log(`App running on port ${port}.`);
