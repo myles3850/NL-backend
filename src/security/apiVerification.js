@@ -6,5 +6,7 @@ function apiAuthVerification(request, response, next) {
 	if (token.isUndefined()) {
 		return response.status(httpStatusCode.UNAUTHORIZED).send(message.INCORRECT_CREDENTIALS);
 	}
+
+	//only call this once you have verified the token being sent is trusetd AND we have logged the access
 	next();
 }
