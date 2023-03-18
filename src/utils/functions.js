@@ -1,6 +1,6 @@
 module.exports = {
 
-	randomNumberToString: (max) => {
-		return Math.floor(Math.random() * max).toString(36); // remove `0.`
+	randomNumberToString: () => {
+		return (Math.random() * 100).toString(36); // remove `0.`
 	},
 };
