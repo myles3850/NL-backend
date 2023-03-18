@@ -6,6 +6,8 @@ const { httpStatusCode, message } = require("../utils/constants");
 async function apiAuthVerification(request, response, next) {
 	const token = request.get('Authorization');
 
+	const isAuthroised = false;
+
 	if (token === undefined) {
 		return response.status(httpStatusCode.UNAUTHORIZED).send(message.INCORRECT_CREDENTIALS);
 	}
@@ -32,7 +34,7 @@ async function apiAuthVerification(request, response, next) {
 			return response.status(httpStatusCode.UNAUTHORIZED).send(message.INCORRECT_CREDENTIALS);
 		}
 		await pool.query(updateLastQueryTime, [Date.now(), jwtPayload.token]);
-
+		isAuthroised = true
 
 
 	} catch (e) {
@@ -41,7 +43,10 @@ async function apiAuthVerification(request, response, next) {
 	}
 
 	//only call this once you have verified the token being sent is trusetd AND we have logged the access
-	next();
+	if (isAuthroised) {
+		next();
+	}
+	
 }
 
 module.exports = {
