@@ -10,7 +10,6 @@ const { authenticateAPIRequest } = require('./services/token');
 const app = express();
 const port = process.env.APP_PORT || process.env.PORT;
 
-var whitelist = process.env.CORS_APPROVED_ADDRESSES;
 var corsOptions = {
 	origin: true,
 	
