@@ -12,15 +12,15 @@ const authenticateAPIRequest = async (request, response) => {
 	};
 
 	const captureQuery = `
-	SELECT salt, hashed_password FROM credentials
+	SELECT * FROM credentials
 	WHERE user_type = 2 AND user_id IN (
 		SELECT user_id FROM users WHERE is_api_user = true 
 		AND email = $1)
 	`;
 
 	const loggingQuery = `
-	INSERT INTO api_users (token, last_query) 
-	VALUES ($1, $2)
+	INSERT INTO api_tokens (token, last_query, linked_user) 
+	VALUES ($1, $2, $3)
 	`
 	//todo - capture the credentials and return a test token built from the credentials sent
 	const secretCredentials = await pool.query(captureQuery, [client_id]);
@@ -30,8 +30,9 @@ const authenticateAPIRequest = async (request, response) => {
 		return response.status(httpStatusCode.UNAUTHORIZED).send(responseObj);
 	}
 	try {
-		const { salt, hashed_password } = secretCredentials.rows[0];
+		const { salt, hashed_password, user_id } = secretCredentials.rows[0];
 		const hashedPassword = hashed_password;
+		const userId = user_id
 		const givenPassword = await bcrypt.hash(client_secret, salt);
 
 		const matchingPassword = givenPassword === hashedPassword;
@@ -46,10 +47,10 @@ const authenticateAPIRequest = async (request, response) => {
 		// }
 
 		const token = randomNumberToString() + randomNumberToString();
-		const unixIssueTime = Date.now();
+		const unixIssueTime = getCurrentTimeFromStamp();
 		
 		try {
-			await pool.query(loggingQuery, [token, unixIssueTime])
+			await pool.query(loggingQuery, [token, unixIssueTime, userId])
 		} catch (e) {
 			return response.status(httpStatusCode.INTERNAL_SERVER_ERROR).send(message.INVALID_REQUEST)
 		}
@@ -69,11 +70,18 @@ const authenticateAPIRequest = async (request, response) => {
 
 
 	} catch (e) {
-		console.error(e);
 		return response(httpStatusCode.INTERNAL_SERVER_ERROR).send({
 			message: 'internal server error',
 		});
 	}
+};
+
+getCurrentTimeFromStamp = function() {
+	let timestamp = Date.now()
+    var d = new Date(timestamp);
+
+    timeStampCon = d.getFullYear() +'/' +(d.getMonth() +1) + '/'+ d.getDate() + " " + d.getHours() + ':' + d.getMinutes();
+    return timeStampCon;
 };
 
 module.exports = {
