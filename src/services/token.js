@@ -5,7 +5,7 @@ const { message, httpStatusCode } = require('../utils/constants');
 const { randomNumberToString } = require('../utils/functions');
 
 const authenticateAPIRequest = async (request, response) => {
-	const { ID, secret } = request.body;
+	const { client_id, client_secret } = request.body;
 
 	const responseObj = {
 		sucsess: false,
@@ -18,7 +18,7 @@ const authenticateAPIRequest = async (request, response) => {
 		AND email = $1)
 	`;
 	//todo - capture the credentials and return a test token built from the credentials sent
-	const secretCredentials = await pool.query(captureQuery, [ID]);
+	const secretCredentials = await pool.query(captureQuery, [client_id]);
 
 	if (!secretCredentials.rowCount) {
 		responseObj.message = message.INCORRECT_CREDENTIALS;
@@ -27,7 +27,7 @@ const authenticateAPIRequest = async (request, response) => {
 	try {
 		const { salt, hashed_password } = secretCredentials.rows[0];
 		const hashedPassword = hashed_password;
-		const givenPassword = await bcrypt.hash(secret, salt);
+		const givenPassword = await bcrypt.hash(client_secret, salt);
 
 		const matchingPassword = givenPassword === hashedPassword;
 
@@ -52,7 +52,7 @@ const authenticateAPIRequest = async (request, response) => {
 		const jwtToken = jwt.sign(jwtPayload, jwtKey, {algorithm:'HS256',})
 
 			responseObj.sucsess = true;
-			responseObj.token = jwtToken;
+			responseObj.access_token = jwtToken;
 			return response.status(httpStatusCode.CREATED).send(responseObj);
 
 
